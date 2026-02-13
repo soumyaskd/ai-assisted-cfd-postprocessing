@@ -1,17 +1,13 @@
-# CFD AI Postprocessor
+# AI-Assisted CFD Solver Diagnostics & Post-Processing
 
-A Python-based tool to analyze CFD simulation outputs and compute key flow metrics.
+A physics-aware Python framework for CFD post-processing, solver diagnostics,
+and convergence validation using residuals, forces, and probes.
 
-## Features
-- Reads CFD probe data (CSV)
-- Computes mean and maximum velocity
-- Computes average pressure
+## Why this project?
+CFD users often rely on residual plots alone to judge convergence.
+In practice, residuals can be misleading and hide pseudo-convergence.
 
-## Tech Stack
-- Python
-- Pandas
-- NumPy
-
-## Next Steps
-- Visualization of flow metrics
-- AI-generated engineering insights
+This project demonstrates a solver-engineer approach to CFD validation using:
+- Residual decay analysis
+- Force convergence checks
+- Physics-aware solver verdict logic
