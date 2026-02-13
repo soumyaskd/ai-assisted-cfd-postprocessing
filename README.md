@@ -11,3 +11,5 @@ This project demonstrates a solver-engineer approach to CFD validation using:
 - Residual decay analysis
 - Force convergence checks
 - Physics-aware solver verdict logic
+=======
+
