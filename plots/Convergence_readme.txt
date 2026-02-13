@@ -1,0 +1,3 @@
+“All governing equations exhibit monotonic, log-linear residual decay over multiple orders of magnitude, followed by asymptotic convergence to the numerical tolerance floor. No residual oscillations or late-stage instabilities are observed. The solution is numerically converged.”
+
+“Drag, lift, and decomposed pressure and viscous forces exhibit smooth, monotonic convergence with negligible late-stage drift. The closure of total drag from pressure and viscous components confirms force integration consistency. Combined with residual convergence, this indicates a fully converged steady-state solution.”

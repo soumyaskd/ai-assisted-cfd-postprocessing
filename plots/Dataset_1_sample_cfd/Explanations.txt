@@ -1,0 +1,221 @@
+## The rule to keep in mind
+
+> \*\*Good plots reveal failure modes early.
+> Great plots reveal them before velocity does.\*\*
+
+Everything below follows that rule.
+
+---
+
+# 1️⃣ Acceleration vs Time (dv/dt)
+
+### What to plot
+
+[
+\frac{dv}{dt}
+]
+
+```python
+
+acceleration = np.gradient(df\["velocity"], df\["time"])
+
+```
+
+### Why this is insightful
+
+* Velocity can look smooth while **acceleration spikes**
+* Acceleration amplifies:
+
+  * timestep issues
+  * sudden forcing
+  * numerical noise
+
+### What it tells you physically
+
+* Whether the flow is being forced aggressively
+* Whether momentum response is realistic
+
+### What a red flag looks like
+
+* Sharp spikes
+* Sign flips
+* High-frequency oscillations
+
+📌 **This is the momentum-side mirror of pressure gradient**
+
+---
+
+# 2️⃣ Absolute pressure gradient (|dP/dt|) vs Time
+
+You already plotted signed gradient. Now strip the sign.
+
+```python
+
+abs\_pressure\_gradient = np.abs(pressure\_gradient)
+
+```
+
+### Why this matters
+
+* Engineers care about **magnitude of change**, not direction
+* Makes spikes obvious
+* Much easier to threshold later for ML
+
+### What it reveals
+
+* “How violent is the pressure response?”
+* Perfect for anomaly detection rules
+
+📌 This becomes a **feature**, not just a plot.
+
+---
+
+# 3️⃣ Cumulative pressure drop vs Time
+
+This one is subtle but excellent.
+
+```python
+
+cumulative\_pressure\_drop = df\["pressure"].iloc\[0] - df\["pressure"]
+
+```
+
+### What it tells you
+
+* How pressure loss accumulates
+* Whether losses accelerate or saturate
+
+### Physical meaning
+
+* Linear → steady energy conversion
+* Curving upward → increasing losses
+* Flattening → flow reaching equilibrium
+
+📌 Very useful in:
+
+* diffuser analysis
+* duct flows
+* pump / fan simulations
+
+---
+
+# 4️⃣ Velocity vs Pressure (phase-space plot)
+
+This is **not** a time plot — and that’s why it’s powerful.
+
+```python
+
+plt.plot(df\["pressure"], df\["velocity"])
+
+```
+
+### Why this is elite
+
+* Shows coupling directly
+* Removes time as a crutch
+
+### How to read it
+
+* Smooth curve → healthy coupling
+* Loops / zig-zags → instability or lag
+* Scatter → numerical noise
+
+📌 This is a *solver-coupling diagnostic*, not just physics.
+
+---
+
+# 5️⃣ Normalized metrics (dimensionless sanity check)
+
+Normalize velocity and pressure:
+
+```python
+
+v\_norm = (df\["velocity"] - df\["velocity"].mean()) / df\["velocity"].std()
+
+p\_norm = (df\["pressure"] - df\["pressure"].mean()) / df\["pressure"].std()
+
+```
+
+Plot:
+
+```python
+
+plt.plot(df\["time"], v\_norm, label="Velocity (norm)")
+
+plt.plot(df\["time"], p\_norm, label="Pressure (norm)")
+
+plt.legend()
+
+```
+
+### Why this is powerful
+
+* Removes scale bias
+* Lets you compare trends fairly
+* Reveals which variable dominates dynamics
+
+📌 This is how ML “sees” your data later.
+
+---
+
+# 6️⃣ Rolling-window variance (early instability detector)
+
+```python
+
+rolling\_pressure\_std = df\["pressure"].rolling(window=3).std()
+
+```
+
+### Why this matters
+
+* Captures **local instability**
+* Sensitive to noise and oscillations
+* Flags trouble before divergence
+
+📌 This is how real-time solvers monitor health.
+
+---
+
+## If I had to rank them (most value first)
+
+1️⃣ Pressure gradient (you already did this)
+2️⃣ **Acceleration vs time**
+3️⃣ **Velocity vs pressure (phase plot)**
+4️⃣ Absolute pressure gradient
+5️⃣ Rolling variance
+6️⃣ Cumulative pressure drop
+
+Do **not** try to plot all at once.
+Pick **one or two**, understand them deeply.
+
+---
+
+## My recommendation for *now*
+
+Add **just these two next**:
+
+1. **Acceleration vs time**
+2. **Velocity vs pressure**
+
+That gives you:
+
+* one momentum diagnostic
+* one coupling diagnostic
+
+Balanced, powerful, not noisy.
+
+---
+
+## Why this matters for your portfolio
+
+Most people show:
+
+* velocity vs time
+* pressure vs time
+
+You’re showing:
+
+* **solver health**
+* **numerical behavior**
+* **physics–numerics interaction**
+
